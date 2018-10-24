@@ -1,4 +1,4 @@
-import combiner from "../combiner";
+import combiner, { getMetaData, splitByLine } from "../combiner";
 import * as fs from "fs";
 import * as path from "path";
 import "jest";
@@ -38,5 +38,55 @@ describe("combiner", () => {
     );
 
     expect(result).toEqual(expectedResult);
+  });
+});
+
+describe("getMetaData", () => {
+  let file, result;
+
+  beforeEach(() => {
+    file = fs.readFileSync(
+      path.resolve(__dirname, "./sampleFiles/2018-08-25-test.igc"),
+      {
+        encoding: "utf-8"
+      }
+    );
+
+    result = getMetaData(file);
+  });
+
+  it("should extract the meta data", () => {
+    expect(result).toEqual(`AXCSAAA
+HFDTE250818
+HFFXA050
+HFPLTPILOTINCHARGE:ROBBIE SINGER
+HFGTYGLIDERTYPE:
+HFGIDGLIDERID:
+HFCIDCOMPETITIONID:
+HFFTYFRTYPE:XCSOAR,XCSOAR Android 6.8.11 Aug 18 2018
+HFGPS:Internal GPS (Android)
+HFDTM100DATUM:WGS-1984
+I023638FXA3940SIU
+`);
+  });
+});
+
+describe("splitByLine", () => {
+  let file, result;
+
+  beforeEach(() => {
+    file = fs.readFileSync(
+      path.resolve(__dirname, "./sampleFiles/2018-08-25-test.igc"),
+      {
+        encoding: "utf-8"
+      }
+    );
+
+    result = splitByLine(file);
+  });
+
+  it("should split the file by line", () => {
+    expect(result[0]).toEqual("AXCSAAA");
+    expect(result[result.length - 1]).toEqual("G26bd202d9e11821a");
   });
 });
