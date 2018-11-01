@@ -1,4 +1,9 @@
-import combiner, { getMetaData, splitByLine } from "../combiner";
+import combiner, {
+  getMetaData,
+  getFlightData,
+  splitByLine,
+  getFirstFix
+} from "../combiner";
 import * as fs from "fs";
 import * as path from "path";
 import "jest";
@@ -71,6 +76,31 @@ I023638FXA3940SIU
   });
 });
 
+describe("getFlightData", () => {
+  let file, result;
+
+  beforeEach(() => {
+    file = fs.readFileSync(
+      path.resolve(__dirname, "./sampleFiles/2018-08-25-test.igc"),
+      {
+        encoding: "utf-8"
+      }
+    );
+
+    result = getFlightData(file);
+  });
+
+  it("should extract the flight data", () => {
+    expect(result).toEqual(`F140654
+B1406545546084N00303633WA004480045300000
+F141125
+B1411255546072N00303690WA004510045800000
+F141555
+B1415555546105N00303651WA004570048600000
+`);
+  });
+});
+
 describe("splitByLine", () => {
   let file, result;
 
@@ -88,5 +118,24 @@ describe("splitByLine", () => {
   it("should split the file by line", () => {
     expect(result[0]).toEqual("AXCSAAA");
     expect(result[result.length - 1]).toEqual("G26bd202d9e11821a");
+  });
+});
+
+describe("getFirstFix", () => {
+  let file, result;
+
+  beforeEach(() => {
+    file = fs.readFileSync(
+      path.resolve(__dirname, "./sampleFiles/2018-08-25-test.igc"),
+      {
+        encoding: "utf-8"
+      }
+    );
+
+    result = getFirstFix(file);
+  });
+
+  it("should find the time of the first fix in the file", () => {
+    expect(result).toEqual(140654);
   });
 });
