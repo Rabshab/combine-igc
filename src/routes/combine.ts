@@ -1,12 +1,14 @@
 import { Router } from "express";
+import combiner from "../combiner";
 
 const router = Router();
 
 router.post("/combine", async (req, res) => {
-  //TODO implement combining logic
+  const parsed = JSON.parse(req.body);
+  const combined = combiner(parsed);
 
-  res.set("Content-Type", "application/json");
-  await res.send("result");
+  res.set("Content-Type", "text/plain");
+  await res.send(combined);
 });
 
 export default router;
